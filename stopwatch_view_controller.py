@@ -3,6 +3,9 @@ from stopwatch_view import StopwatchView
 
 
 class StopwatchViewController():
+    """
+    Manages both the GUI and the stopwatch, passing information between them.
+    """
     
     def __init__(self):
         self.view = StopwatchView()
@@ -10,6 +13,7 @@ class StopwatchViewController():
         self._setup_view()
 
     def _setup_view(self):
+        """Attaches the proper stopwatch functions as callbacks in the GUI."""
         self.view.set_start_stop_button_command(self._control_button_logic)
         self.view.set_reset_button_command(self.stopwatch.reset)
 
@@ -17,6 +21,10 @@ class StopwatchViewController():
         self.view.start()
 
     def _control_button_logic(self):
+        """
+        Determines and executes the logic for start or stop functionality, 
+        depending on the state of the stopwatch.
+        """
         if not self.stopwatch.running:
             self.stopwatch.start()
             self.view.change_start_stop_text("Stop")

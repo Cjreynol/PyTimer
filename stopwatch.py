@@ -2,8 +2,14 @@ from time import time
 
 
 class Stopwatch():
+    """
+    The Stopwatch class is intended to function as a simple timer, providing 
+    functionality for stopping, starting, resetting, and returning the 
+    current time(split).
+    """
+
     UPDATE_DELAY = 50
-    DISPLAY_STRING = "{:>02}:{:>02}:{:>02}.{:>02}"
+    DISPLAY_STRING = "{:>02}:{:>02}:{:>02}.{:>02}" # truncate all numbers to length 2
 
     def __init__(self, string_variable, root, elapsed_time = 0.0):
         self.root = root
@@ -30,6 +36,14 @@ class Stopwatch():
         hseconds = str(elapsed_time - seconds).split('.')[1][0:2]
 
         self.time_string.set(self.DISPLAY_STRING.format(hours, minutes, seconds, hseconds))
+    
+    def reset(self):
+        self._start = time()
+        self._elapsed_time = 0.0
+        self._setTime(self._elapsed_time)
+
+    def split(self):
+        return self.time_string.get()
         
     def start(self):
         if not self.running:
@@ -43,8 +57,3 @@ class Stopwatch():
             self._elapsed_time = time() - self._start
             self._setTime(self._elapsed_time)
             self.running = False
-    
-    def reset(self):
-        self._start = time()
-        self._elapsed_time = 0.0
-        self._setTime(self._elapsed_time)

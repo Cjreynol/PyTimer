@@ -1,3 +1,8 @@
+"""
+Brings the components of the application together, starting the main thread of 
+execution.
+"""
+
 from stopwatch_view_controller import StopwatchViewController
 
 
