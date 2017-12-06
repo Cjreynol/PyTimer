@@ -8,7 +8,7 @@ class StopwatchView:
 
     BACKGROUND_COLOR = "black"
     FOREGROUND_COLOR = "#00F900"
-    FONT = ("Courier Prime Code", 36)
+    FONT = ("Arial", 36)
 
     def __init__(self):
         self.root = self._initialize_root()
@@ -22,6 +22,9 @@ class StopwatchView:
         self._initialize_widgets()
         self._place_widgets()
 
+    def add_quit_function(self, function):
+        self.root.protocol("WM_DELETE_WINDOW", function)
+
     def change_start_stop_text(self, new_text):
         """Updates the text of the start/stop button."""
         self.start_stop_button.config(text=new_text)
@@ -30,9 +33,8 @@ class StopwatchView:
         """Returns the StringVar connected to the timer display Label."""
         return self.stopwatch_label_var
 
-    def get_root(self):
-        """Returns the GUI root, used for calling the after function."""
-        return self.root
+    def quit(self):
+        self.root.destroy()
 
     def set_reset_button_command(self, function):
         self.reset_button.config(command = function)

@@ -1,4 +1,5 @@
-from time import time
+from threading import Thread
+from time import sleep, time
 
 
 class Stopwatch():
@@ -8,24 +9,35 @@ class Stopwatch():
     current time(split).
     """
 
-    UPDATE_DELAY = 50
-    DISPLAY_STRING = "{:>02}:{:>02}:{:>02}.{:>02}" # truncate all numbers to length 2
+    UPDATE_DELAY = 0.05
 
-    def __init__(self, string_variable, root, elapsed_time = 0.0):
-        self.root = root
+    def __init__(self, string_variable, elapsed_time = 0.0):
         self._start = 0.0
         self._elapsed_time = elapsed_time
-        self.running = False
+        self.running = True
+        self.timer_on = False
 
         self.time_string = string_variable
         self._setTime(self._elapsed_time)
+        
+        Thread(target = self._update).start()
     
     def _update(self):
-        self._elapsed_time = time() - self._start
-        self._setTime(self._elapsed_time)
-        self._timer_id = self.root.after(self.UPDATE_DELAY, self._update)
+        """
+        Continues to loop, updating time and display when the timer is on, 
+        until the program exits.
+        """
+        while self.running:
+            if self.timer_on:
+                self._elapsed_time = time() - self._start
+                self._setTime(self._elapsed_time)
+            sleep(self.UPDATE_DELAY)
         
     def _setTime(self, elapsed_time):
+        """
+        Converts the seconds passed into HH:MM:SS.HS format and updates the 
+        time_string variable.
+        """
         hours = int(elapsed_time // 3600)
         elapsed_time = elapsed_time % 3600
 
@@ -35,7 +47,11 @@ class Stopwatch():
         seconds = int(elapsed_time)
         hseconds = str(elapsed_time - seconds).split('.')[1][0:2]
 
-        self.time_string.set(self.DISPLAY_STRING.format(hours, minutes, seconds, hseconds))
+        self.time_string.set("{:>02}:{:>02}:{:>02}.{:>02}".format(hours, minutes, seconds, hseconds))
+
+    def shutdown(self):
+        """Signals to the thread to end execution, the program is done."""
+        self.running = False
     
     def reset(self):
         self._start = time()
@@ -46,14 +62,10 @@ class Stopwatch():
         return self.time_string.get()
         
     def start(self):
-        if not self.running:
+        if not self.timer_on:
             self._start = time() - self._elapsed_time
-            self._update()
-            self.running = True
+            self.timer_on = True
             
     def stop(self):
-        if self.running:
-            self.root.after_cancel(self._timer_id)
-            self._elapsed_time = time() - self._start
-            self._setTime(self._elapsed_time)
-            self.running = False
+        if self.timer_on:
+            self.timer_on = False
