@@ -15,8 +15,8 @@ OPTIONS = {
         'CFBundleName': APP_NAME,
         'CFBundleDisplayName': APP_NAME,
         'CFBundleIdentifier': "info.chadreynolds.osx.pytimer",
-        'CFBundleVersion': "1.0.0",
-        'CFBundleShortVersionString': "1.0.0",
+        'CFBundleVersion': "1.0.1",
+        'CFBundleShortVersionString': "1.0.1",
         'NSHumanReadableCopyright': u"Copyright © 2017, Chad Reynolds, All Rights Reserved"
     }
 }
