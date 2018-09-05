@@ -1,5 +1,5 @@
-from threading import Thread
-from time import sleep, time
+from threading  import Thread
+from time       import sleep, time
 
 
 class Stopwatch():
@@ -21,6 +21,26 @@ class Stopwatch():
         self._setTime(self._elapsed_time)
         
         Thread(target = self._update).start()
+
+    def shutdown(self):
+        self.running = False
+    
+    def reset(self):
+        self._start = time()
+        self._elapsed_time = 0.0
+        self._setTime(self._elapsed_time)
+
+    def split(self):
+        return self.time_string.get()
+        
+    def start(self):
+        if not self.timer_on:
+            self._start = time() - self._elapsed_time
+            self.timer_on = True
+            
+    def stop(self):
+        if self.timer_on:
+            self.timer_on = False
     
     def _update(self):
         """
@@ -48,24 +68,3 @@ class Stopwatch():
         hseconds = str(elapsed_time - seconds).split('.')[1][0:2]
 
         self.time_string.set("{:>02}:{:>02}:{:>02}.{:>02}".format(hours, minutes, seconds, hseconds))
-
-    def shutdown(self):
-        """Signals to the thread to end execution, the program is done."""
-        self.running = False
-    
-    def reset(self):
-        self._start = time()
-        self._elapsed_time = 0.0
-        self._setTime(self._elapsed_time)
-
-    def split(self):
-        return self.time_string.get()
-        
-    def start(self):
-        if not self.timer_on:
-            self._start = time() - self._elapsed_time
-            self.timer_on = True
-            
-    def stop(self):
-        if self.timer_on:
-            self.timer_on = False
