@@ -17,8 +17,8 @@ back to 0 with the bottom-most button.
 ## Building from source
 
 Creating the application bundle requires `py2app` to be installed and is only 
-tested using Python 3.7, though I suspect older versions will work fine as 
-long as there is a valid version of `py2app` to match it..  
+tested using Python 3.7 and py2app V0.16, though I suspect older versions 
+will work fine as long as the proper `py2app` version is used.
 
 I would suggest creating a virtual environment (`python3 -m venv <env name>`) 
 and then installing `py2app` with `pip install py2app`.  

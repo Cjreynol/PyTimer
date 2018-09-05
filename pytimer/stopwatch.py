@@ -11,60 +11,99 @@ class Stopwatch():
 
     UPDATE_DELAY = 0.05
 
-    def __init__(self, string_variable, elapsed_time = 0.0):
-        self._start = 0.0
-        self._elapsed_time = elapsed_time
-        self.running = True
+    def __init__(self, string_variable):
+        self.done = False
         self.timer_on = False
 
-        self.time_string = string_variable
-        self._setTime(self._elapsed_time)
+        self._start = None
+        # used to keep track when timer is off
+        self._elapsed_time = 0.0
+
+        self.time_string_var = string_variable
+        self._set_time_string(self._elapsed_time)
         
         Thread(target = self._update).start()
 
     def shutdown(self):
-        self.running = False
+        """
+        Set the done flag to signal the time updating thread to stop after its 
+        next update loop finishes.
+        """
+        self.done = True
     
     def reset(self):
+        """
+        Put the Stopwatch back to 0, with no time elapsed.
+        """
+        self.set_time(0.0)
+
+    def set_time(self, new_time):
+        """
+        Set the current Stopwatch time to the time(in ms) passed in.
+        """
         self._start = time()
-        self._elapsed_time = 0.0
-        self._setTime(self._elapsed_time)
+        self._elapsed_time = new_time
+        self._set_time_string(self._elapsed_time)
 
     def split(self):
-        return self.time_string.get()
+        """
+        Return the current time(in ms) of the Stopwatch.
+        """
+        time_str = self.time_string_var.get()
+        return self._time_str_to_ms(time_str)
         
     def start(self):
+        """
+        Set the flag for the background thread to begin updating the timer.
+
+        If the timer is already on, this method does nothing.
+        """
         if not self.timer_on:
             self._start = time() - self._elapsed_time
             self.timer_on = True
             
     def stop(self):
+        """
+        Set the flag for the background thread to stop updating the timer.
+
+        If the timer is already off, this method does nothing.
+        """
         if self.timer_on:
             self.timer_on = False
     
     def _update(self):
         """
-        Continues to loop, updating time and display when the timer is on, 
-        until the program exits.
+        Loop updating the time string until the Stopwatch is shutdown.
         """
-        while self.running:
+        while not self.done:
             if self.timer_on:
                 self._elapsed_time = time() - self._start
-                self._setTime(self._elapsed_time)
+                self._set_time_string(self._elapsed_time)
             sleep(self.UPDATE_DELAY)
+
+    def _time_str_to_ms(self, time_str):
+        """
+        Convert a string in the HH:MM:SS.HS format into milliseconds.
+        """
+        hours, minutes, seconds = map(float, time_str.split(':'))
+        return seconds + minutes * 60 + hours * 3600
+
+    def _ms_to_time_str(self, ms):
+        """
+        Converts the milliseconds passed into HH:MM:SS.HS format.
+        """
+        hours, ms = divmod(ms, 3600)
+        minutes, ms = divmod(ms, 60)
+        seconds = int(ms)
+        hseconds = str(ms - seconds).split('.')[1][0:2]
         
-    def _setTime(self, elapsed_time):
+        return "{:>02}:{:>02}:{:>02}.{:>02}".format(int(hours), int(minutes), 
+                                                    seconds, hseconds)
+        
+    def _set_time_string(self, elapsed):
         """
-        Converts the seconds passed into HH:MM:SS.HS format and updates the 
-        time_string variable.
+        Set the time string using the passed in time, expected to be in 
+        milliseconds.
         """
-        hours = int(elapsed_time // 3600)
-        elapsed_time = elapsed_time % 3600
-
-        minutes = int(elapsed_time // 60)
-        elapsed_time = elapsed_time % 60
-
-        seconds = int(elapsed_time)
-        hseconds = str(elapsed_time - seconds).split('.')[1][0:2]
-
-        self.time_string.set("{:>02}:{:>02}:{:>02}.{:>02}".format(hours, minutes, seconds, hseconds))
+        new_str = self._ms_to_time_str(elapsed)
+        self.time_string_var.set(new_str)
