@@ -81,12 +81,19 @@ class Stopwatch():
                 self._set_time_string(self._elapsed_time)
             sleep(self.UPDATE_DELAY)
 
-    def _time_str_to_ms(self, time_str):
+    def time_str_to_ms(self, time_str):
         """
         Convert a string in the HH:MM:SS.HS format into milliseconds.
+
+        Returns None if an error occurred during conversion.
         """
-        hours, minutes, seconds = map(float, time_str.split(':'))
-        return seconds + minutes * 60 + hours * 3600
+        result = None
+        try:
+            hours, minutes, seconds = map(float, time_str.split(':'))
+            result = seconds + minutes * 60 + hours * 3600
+        except ValueError: pass
+            
+        return result
 
     def _ms_to_time_str(self, ms):
         """

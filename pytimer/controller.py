@@ -1,5 +1,6 @@
-from pytimer.stopwatch  import Stopwatch
-from pytimer.view       import View
+from pytimer.stopwatch      import Stopwatch
+from pytimer.time_entry_box import TimeEntryBox
+from pytimer.view           import View
 
 
 class Controller():
@@ -32,3 +33,12 @@ class Controller():
 
     def reset_callback(self):
         self.stopwatch.reset()
+
+    def set_time_callback(self):
+        TimeEntryBox(self, "Enter new time")
+
+    def confirm_callback(self, retrieve_func):
+        time_str = retrieve_func()
+        new_time = self.stopwatch.time_str_to_ms(time_str)
+        if new_time is not None:
+            self.stopwatch.set_time(new_time)

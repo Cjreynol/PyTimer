@@ -11,8 +11,14 @@ If you want to run from source, then run the `__main__.py` script using
 either `python -m pytimer` or `python pytimer/__main__.py` to bring up the 
 application window.
 
-V1.1 is simple, start and stop the timer with the top-most button and reset it 
-back to 0 with the bottom-most button.
+## Using PyTimer
+
+The interface is simple, the Start/Stop button(shortcut spacebar) toggles the 
+stopwatch and Reset puts it back to 00:00:00.00.
+
+New in 1.2, clicking on the time itself brings up a window to enter a time to 
+set the stopwatch to.  This is intended to help with recovering from a crash 
+or accidental closing of the application.
 
 ## Building from source
 
