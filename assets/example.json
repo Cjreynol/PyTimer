@@ -1,0 +1,66 @@
+{
+    "file_version" : 1.0,
+    "title" : "A Link to the Past - NMG Any%",
+    "segments" : [
+        {
+            "segment_label" : "Zelda Rescue",
+            "best_run_time" : 0.0
+        },
+        {
+            "segment_label" : "Eastern Palace",
+            "best_run_time" : 0.0
+        },
+        {
+            "segment_label" : "Desert Palace",
+            "best_run_time" : 0.0
+        },
+        {
+            "segment_label" : "Tower of Hera",
+            "best_run_time" : 0.0
+        },
+        {
+            "segment_label" : "Master Sword",
+            "best_run_time" : 0.0
+        },
+        {
+            "segment_label" : "Dark World",
+            "best_run_time" : 0.0
+        },
+        {
+            "segment_label" : "Palace of Darkness",
+            "best_run_time" : 0.0
+        },
+        {
+            "segment_label" : "Swamp Palace",
+            "best_run_time" : 0.0
+        },
+        {
+            "segment_label" : "Skull Woods",
+            "best_run_time" : 0.0
+        },
+        {
+            "segment_label" : "Thieves Town",
+            "best_run_time" : 0.0
+        },
+        {
+            "segment_label" : "Ice Palace",
+            "best_run_time" : 0.0
+        },
+        {
+            "segment_label" : "Misery Mire",
+            "best_run_time" : 0.0
+        },
+        {
+            "segment_label" : "Turtle Rock",
+            "best_run_time" : 0.0
+        },
+        {
+            "segment_label" : "Ganon's Tower",
+            "best_run_time" : 0.0
+        },
+        {
+            "segment_label" : "Triforce",
+            "best_run_time" : 0.0
+        }
+    ]
+}

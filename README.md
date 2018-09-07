@@ -18,7 +18,10 @@ stopwatch and Reset puts it back to 00:00:00.00.
 
 New in 1.2, clicking on the time itself brings up a window to enter a time to 
 set the stopwatch to.  This is intended to help with recovering from a crash 
-or accidental closing of the application.
+or accidental closing of the application.  
+
+**Note:** To avoid race condition bugs, clicking on the time to set it does 
+stop the stopwatch.
 
 ## Building from source
 

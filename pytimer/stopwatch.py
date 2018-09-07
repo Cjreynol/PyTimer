@@ -50,7 +50,7 @@ class Stopwatch():
         Return the current time(in ms) of the Stopwatch.
         """
         time_str = self.time_string_var.get()
-        return self._time_str_to_ms(time_str)
+        return self.time_str_to_ms(time_str)
         
     def start(self):
         """
@@ -81,7 +81,8 @@ class Stopwatch():
                 self._set_time_string(self._elapsed_time)
             sleep(self.UPDATE_DELAY)
 
-    def time_str_to_ms(self, time_str):
+    @classmethod
+    def time_str_to_ms(cls, time_str):
         """
         Convert a string in the HH:MM:SS.HS format into milliseconds.
 
@@ -95,7 +96,8 @@ class Stopwatch():
             
         return result
 
-    def _ms_to_time_str(self, ms):
+    @classmethod
+    def ms_to_time_str(cls, ms):
         """
         Converts the milliseconds passed into HH:MM:SS.HS format.
         """
@@ -112,5 +114,5 @@ class Stopwatch():
         Set the time string using the passed in time, expected to be in 
         milliseconds.
         """
-        new_str = self._ms_to_time_str(elapsed)
+        new_str = self.ms_to_time_str(elapsed)
         self.time_string_var.set(new_str)
