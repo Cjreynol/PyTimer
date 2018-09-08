@@ -1,0 +1,22 @@
+{
+    "file_version": 1.0,
+    "title": "Title here",
+    "segments": [
+        {
+            "segment_label": "Segment Here",
+            "best_run_time": 0.0
+        },
+        {
+            "segment_label": "Segment Here",
+            "best_run_time": 0.0
+        },
+        {
+            "segment_label": "Segment Here",
+            "best_run_time": 0.0
+        },
+        {
+            "segment_label": "Segment Here",
+            "best_run_time": 0.0
+        }
+    ]
+}

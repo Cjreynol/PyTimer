@@ -1,24 +1,24 @@
 from os                     import path
 
-from tkinter.filedialog     import askopenfilename
+from tkinter.filedialog     import askopenfilename, asksaveasfilename
 
-from pytimer.main_window    import MainWindow
 from pytimer.split_handler  import SplitHandler
-from pytimer.splits_view    import SplitsView
+from pytimer.gui            import (MainWindow, SplitsView, StopwatchView, 
+                                        TimeEntryBox)
 from pytimer.stopwatch      import Stopwatch
-from pytimer.stopwatch_view import StopwatchView
-from pytimer.time_entry_box import TimeEntryBox
 
 
-class Controller():
+class Controller:
     """
     Manages both the GUI and the stopwatch, passing information between them.
     """
 
-    BASE_DIR = path.join("~", "dev", "projects", "pytimer")
+    PYTIMER_EXTENSION = ".pytimer"
+    FILETYPES = (("pytimer files", "*" + PYTIMER_EXTENSION),)
     
-    def __init__(self):
+    def __init__(self, support_dir):
         self.window = MainWindow(self)
+        self.support_dir = support_dir
 
         self.stopwatch_view = StopwatchView(self.window.root, self)
         self.splits_view = SplitsView(self.window.root, self)
@@ -58,7 +58,8 @@ class Controller():
             self.stopwatch.set_time(new_time)
 
     def open_callback(self):
-        filename = askopenfilename(initialdir = self.BASE_DIR) 
+        filename = askopenfilename(initialdir = self.support_dir, 
+                                    filetypes = self.FILETYPES) 
         if filename:
             self.split_handler = SplitHandler(filename)
             self.splits_view.update(self.split_handler.title, 
@@ -67,7 +68,13 @@ class Controller():
                 self.swap_to_splits_callback()
 
     def save_callback(self):
-        print("save")
+        if self.split_handler is not None:
+            filename = asksaveasfilename(initialdir = self.support_dir, 
+                                        defaultextension = 
+                                            self.PYTIMER_EXTENSION,
+                                        filetypes = self.FILETYPES) 
+            if filename:
+                self.split_handler.save_splits(filename, replace = True)
 
     def swap_to_stopwatch_callback(self):
         if self.splits_view.winfo_ismapped():
@@ -76,3 +83,17 @@ class Controller():
     def swap_to_splits_callback(self):
         if not self.splits_view.winfo_ismapped():
             self.splits_view.pack()
+
+    def split_callback(self):
+        if self.split_handler is not None:
+            time = self.stopwatch.split()
+            set_result = self.split_handler.set_split(time)
+            if set_result is not None:
+                diff, segment_index = set_result
+                time_str, diff_str = (self.stopwatch.ms_to_time_str(time), 
+                                        self.stopwatch.ms_to_time_str(diff))
+                self.splits_view.segments[segment_index].update(time_str, diff_str)
+
+    def skip_split_callback(self):
+        if self.split_handler is not None:
+            self.split_handler.skip_segment()

@@ -24,6 +24,8 @@ class MainWindow:
         root.title(self.WINDOW_TITLE)
 
         root.protocol("WM_DELETE_WINDOW", self.controller.quit)
+        root.bind("<Return>", lambda event: self.controller.split_callback())
+        root.bind("<space>", lambda event: self.controller.control_callback())
         root.bind("<{}>".format(self.CLOSE_WINDOW_BIND), 
                     lambda event: self.controller.quit())
         root.bind("<{}>".format(self.OPEN_BIND), 

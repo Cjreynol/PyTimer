@@ -42,7 +42,7 @@ class SplitHandler:
 
     def save_splits(self, filename, replace):
         with open(filename, 'w') as splitfile:
-            dump(self._build_json_object(), splitfile, replace)
+            dump(self._build_json_object(replace), splitfile, indent = 4)
 
     def _build_json_object(self, replace):
         return {self.VERSION_KEY : self.CURRENT_FILE_VERSION,
@@ -51,9 +51,16 @@ class SplitHandler:
                                         for segment in self.segments]}
 
     def set_split(self, time):
-        self.segments[self._segment_index].current_time = time
-        # save to temp file here in future version
-        self._segment_index += 1
+        if self._segment_index < len(self.segments):
+            self.segments[self._segment_index].current_time = time
+            diff = self.segments[self._segment_index].difference
+
+
+            # save to temp file here in future version
+
+            curr_index = self._segment_index
+            self._segment_index += 1
+            return diff, curr_index
 
     def skip_segment(self):
         self._segment_index += 1
@@ -74,11 +81,11 @@ class SplitHandler:
         def build_json_object(self, replace):
             return {self.LABEL_KEY : self.label,
                     self.BEST_TIME_KEY : 
-                        self.current_time if replace else self.best_time}
+                        round(self.current_time, 4) if replace else self.best_time}
 
         @property
         def difference(self):
             diff = 0.0
-            if self.current_time == 0.0:
-                diff = self.best_time - self.current_time
+            if self.current_time != 0.0:
+                diff = self.current_time - self.best_time
             return diff

@@ -2,7 +2,7 @@ from threading  import Thread
 from time       import sleep, time
 
 
-class Stopwatch():
+class Stopwatch:
     """
     The Stopwatch class is intended to function as a simple timer, providing 
     functionality for stopping, starting, resetting, and returning the 
@@ -49,8 +49,7 @@ class Stopwatch():
         """
         Return the current time(in ms) of the Stopwatch.
         """
-        time_str = self.time_string_var.get()
-        return self.time_str_to_ms(time_str)
+        return self._elapsed_time
         
     def start(self):
         """
@@ -101,13 +100,20 @@ class Stopwatch():
         """
         Converts the milliseconds passed into HH:MM:SS.HS format.
         """
+        lead_string = ""
+        if ms < 0:
+            lead_string = "-"
+            ms = abs(ms)
         hours, ms = divmod(ms, 3600)
         minutes, ms = divmod(ms, 60)
         seconds = int(ms)
         hseconds = str(ms - seconds).split('.')[1][0:2]
-        
-        return "{:>02}:{:>02}:{:>02}.{:>02}".format(int(hours), int(minutes), 
-                                                    seconds, hseconds)
+
+        return "{}{:>02}:{:>02}:{:>02}.{:>02}".format(lead_string, 
+                                                        int(hours), 
+                                                        int(minutes), 
+                                                        seconds, 
+                                                        hseconds)
         
     def _set_time_string(self, elapsed):
         """

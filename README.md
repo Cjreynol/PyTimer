@@ -1,6 +1,6 @@
 # PyTimer
 
-A timer application for macOS, currently with only stopwatch functionality.
+A timer application for macOS, with stopwatch and split tracking functionality.
 
 ## Running PyTimer
 
@@ -10,18 +10,6 @@ the [releases page](https://github.com/Cjreynol/PyTimer/releases).
 If you want to run from source, then run the `__main__.py` script using 
 either `python -m pytimer` or `python pytimer/__main__.py` to bring up the 
 application window.
-
-## Using PyTimer
-
-The interface is simple, the Start/Stop button(shortcut spacebar) toggles the 
-stopwatch and Reset puts it back to 00:00:00.00.
-
-New in 1.2, clicking on the time itself brings up a window to enter a time to 
-set the stopwatch to.  This is intended to help with recovering from a crash 
-or accidental closing of the application.  
-
-**Note:** To avoid race condition bugs, clicking on the time to set it does 
-stop the stopwatch.
 
 ## Building from source
 
@@ -36,6 +24,9 @@ To build from the source run `python app_setup.py py2app` from the project's
 root directory.
 
 ## Possible Py2App error
+
+**Update:**  The developer has created a fix for this problem that should 
+take effect in v0.17
 
 When attempting to run the app setup script using the commands listed above, 
 I received an `UnboundLocalError` stating that `tcl_path` was referenced 

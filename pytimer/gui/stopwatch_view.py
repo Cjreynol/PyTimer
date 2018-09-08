@@ -38,7 +38,6 @@ class StopwatchView(Frame):
                                 text = self.TOGGLE_LABEL, 
                                 command = self.controller.control_callback, 
                                 highlightbackground = self.BACKGROUND_COLOR)
-        self.bind("<space>", lambda event: self.toggle.invoke())
 
         self.reset = Button(self, 
                             text = self.RESET_LABEL,

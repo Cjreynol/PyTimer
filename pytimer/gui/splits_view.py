@@ -1,4 +1,6 @@
-from tkinter    import Button, Frame, Label, StringVar, E, W, X
+from tkinter            import Button, Frame, Label, StringVar, E, W, X
+
+from pytimer.stopwatch  import Stopwatch
 
 
 class SplitsView(Frame):
@@ -15,8 +17,11 @@ class SplitsView(Frame):
 
     def _create(self):
         self.title = Label(self, text = "--")
-        self.split = Button(self, text = "Split")
-        self.skip_split = Button(self, text = "Skip Split")
+        self.split = Button(self, text = "Split", 
+                                command = self.controller.split_callback)
+        self.skip_split = Button(self, text = "Skip Split",
+                                    command = 
+                                        self.controller.skip_split_callback)
 
         self.name = Label(self, text = "Name".ljust(20))
         self.difference = Label(self, text = "| Diff".ljust(8))
@@ -64,7 +69,7 @@ class SegmentFrame(Frame):
     def _create(self, segment_data):
         self.label = Label(self, text = segment_data.label.ljust(20))
         self.best_time = Label(self, text = 
-                                        str(segment_data.best_time).ljust(11))
+                    Stopwatch.ms_to_time_str(segment_data.best_time).ljust(11))
         self.difference = Label(self, text = "--".ljust(8))
         self.current_time = Label(self, text = "--".ljust(11))
 
@@ -75,5 +80,5 @@ class SegmentFrame(Frame):
         self.best_time.grid(row = 0, column = 3)
 
     def update(self, new_time, diff):
-        self.current_time["text"] = str(new_time).ljust(11)
-        self.difference["text"] = str(diff).ljust(8)
+        self.current_time["text"] = new_time.ljust(11)
+        self.difference["text"] = diff.ljust(8)
