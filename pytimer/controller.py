@@ -92,7 +92,8 @@ class Controller:
                 diff, segment_index = set_result
                 time_str, diff_str = (self.stopwatch.ms_to_time_str(time), 
                                         self.stopwatch.ms_to_time_str(diff))
-                self.splits_view.segments[segment_index].update(time_str, diff_str)
+                (self.splits_view.segments[segment_index].
+                    update_segment_time(diff_str))
 
     def skip_split_callback(self):
         if self.split_handler is not None:

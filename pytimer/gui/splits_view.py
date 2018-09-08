@@ -38,8 +38,7 @@ class SplitsView(Frame):
 
         self.name.grid(row = 2, column = 0)
         self.difference.grid(row = 2, column = 1)
-        self.current.grid(row = 2, column = 2)
-        self.best.grid(row = 2, column = 3)
+        self.best.grid(row = 2, column = 2)
 
         self.segment_area.grid(row = 3, column = 0, columnspan = 4)
         for segment in self.segments:
@@ -71,14 +70,11 @@ class SegmentFrame(Frame):
         self.best_time = Label(self, text = 
                     Stopwatch.ms_to_time_str(segment_data.best_time).ljust(11))
         self.difference = Label(self, text = "--".ljust(8))
-        self.current_time = Label(self, text = "--".ljust(11))
 
     def _arrange(self):
         self.label.grid(row = 0, column = 0)
         self.difference.grid(row = 0, column = 1)
-        self.current_time.grid(row = 0, column = 2)
-        self.best_time.grid(row = 0, column = 3)
+        self.best_time.grid(row = 0, column = 2)
 
-    def update(self, new_time, diff):
-        self.current_time["text"] = new_time.ljust(11)
+    def update_segment_time(self, diff):
         self.difference["text"] = diff.ljust(8)
