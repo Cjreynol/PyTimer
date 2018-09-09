@@ -36,7 +36,7 @@ class StopwatchView(Frame):
 
         self.toggle = Button(self, 
                                 text = self.TOGGLE_LABEL, 
-                                command = self.controller.control_callback, 
+                                command = self.controller.toggle_callback, 
                                 highlightbackground = self.BACKGROUND_COLOR)
 
         self.reset = Button(self, 

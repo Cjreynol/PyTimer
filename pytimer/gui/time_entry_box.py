@@ -25,6 +25,7 @@ class TimeEntryBox:
         self.cancel = Button(self.window, 
                                 text = "Cancel", 
                                 command = lambda: self.window.destroy())
+        self.window.bind("<Escape>", lambda event: self.window.destroy())
     
     def _arrange(self):
         self.hour_entry.grid(row = 0, column = 0)

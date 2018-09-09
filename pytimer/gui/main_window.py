@@ -7,71 +7,93 @@ class MainWindow:
 
     WINDOW_TITLE = "PyTimer"
 
-    CLOSE_WINDOW_BIND = "Command-w"
-    OPEN_BIND = "Command-o"
-    SAVE_BIND = "Command-s"
-
-    STOPWATCH_BIND = "Command-Key-1"
-    SPLITS_BIND = "Command-Key-2"
-
     def __init__(self, controller):
         self.controller = controller
         self.root = self._create_root()
         self._create_menu()
 
     def _create_root(self):
+        """
+        Return the root window already configured and with shortcuts bound.
+        """
         root = Tk()
         root.title(self.WINDOW_TITLE)
+        return self._add_root_keybindings(root)
 
+    def _add_root_keybindings(self, root):
+        """
+        Bind all of the program's shortcuts to their callbacks.
+
+        Ignores the menu divides, binds them all as lambdas to capture the 
+        event that is passed by using bind.
+        """
         root.protocol("WM_DELETE_WINDOW", self.controller.quit)
-        root.bind("<Return>", lambda event: self.controller.split_callback())
-        root.bind("<space>", lambda event: self.controller.control_callback())
-        root.bind("<p>", lambda event: self.controller.skip_split_callback())
-        root.bind("<{}>".format(self.CLOSE_WINDOW_BIND), 
-                    lambda event: self.controller.quit())
-        root.bind("<{}>".format(self.OPEN_BIND), 
-                    lambda event: self.controller.open_callback())
-        root.bind("<{}>".format(self.SAVE_BIND), 
-                    lambda event: self.controller.save_callback())
-        root.bind("<{}>".format(self.STOPWATCH_BIND),
-                    lambda event: self.controller.swap_to_stopwatch_callback())
-        root.bind("<{}>".format(self.SPLITS_BIND),
-                    lambda event: self.controller.swap_to_splits_callback())
-        
+
+        for _, subdict in self._get_keybindings().items():
+            for bind, pair in subdict.items():
+                callback, _ = pair
+                root.bind("<{}>".format(bind),
+                            self._make_event_lambda(callback))
         return root
 
     def _create_menu(self):
+        """
+        Bind all of the program's shortcuts to menu items.
+
+        Each key holds a separate set of menu items, with keybinding, 
+        callback, and menu label.
+        """
         menubar = Menu(self.root)
         self.root.config(menu = menubar)
-
-        file_menu = Menu(menubar)
-        menubar.add_cascade(label = "File", menu = file_menu)
-        file_menu.add_command(label = "Open File...", 
-                                command = self.controller.open_callback, 
-                                accelerator =self.OPEN_BIND)
-        file_menu.add_command(label = "Save As...", 
-                                command = self.controller.save_callback, 
-                                accelerator = self.SAVE_BIND)
-        file_menu.add_separator()
-        file_menu.add_command(label = "Close Window", 
-                                command = self.controller.quit,
-                                accelerator = self.CLOSE_WINDOW_BIND)
-
-        view_menu = Menu(menubar)
-        menubar.add_cascade(label = "View", menu = view_menu)
-        view_menu.add_command(label = "Stopwatch", 
-                                command = 
-                                    self.controller.swap_to_stopwatch_callback,
-                                accelerator = 
-                                    self.STOPWATCH_BIND.replace("-Key", ""))
-        view_menu.add_command(label = "Splits", 
-                                command = 
-                                    self.controller.swap_to_splits_callback,
-                                accelerator = 
-                                    self.SPLITS_BIND.replace("-Key", ""))
+        for menu_name, bindings in self._get_keybindings().items():
+            new_menu = Menu(menubar)
+            menubar.add_cascade(label = menu_name, menu = new_menu)
+            for bind, pair in bindings.items():
+                callback, menu_label = pair
+                new_menu.add_command(label = menu_label,
+                                        command = callback,
+                                        accelerator = 
+                                            bind.replace("Key-", ""))
 
     def quit(self):
         self.root.destroy()
 
     def start(self):
         self.root.mainloop()
+
+    def _make_event_lambda(self, function):
+        """
+        Wrap a function to capture and throw away the event argument.
+        """
+        return lambda event: function()
+
+    def _get_keybindings(self):
+        """
+        Return a dict of all the keybindings in the application.
+        
+        Dictionary is in the form of:
+        key : (callback, label)
+        """
+        keybindings = {
+            "File" : {
+                "Command-w" : (self.controller.quit, "Close Window"),
+                "Command-o" : (self.controller.open_callback, "Open Split..."),
+                "Command-s" : (self.controller.save_callback, "Save as...")
+            },
+            "View" : {
+                "Command-Key-1" : (self.controller.swap_to_stopwatch_callback, 
+                                    "Stopwatch View"),
+                "Command-Key-2" : (self.controller.swap_to_splits_callback, 
+                                    "Splits View")
+            },
+            "Controls" : {
+                "space" : (self.controller.toggle_callback, "Toggle"),
+                "r" : (self.controller.reset_callback, "Reset"),
+                "t" : (self.controller.set_time_callback, "Set Time"),
+
+                "Return" : (self.controller.split_callback, "Split"),
+                "Command-[" : (self.controller.back_split_callback, "Back Split"),
+                "Command-]" : (self.controller.skip_split_callback, "Forward Split")
+            }
+        }
+        return keybindings

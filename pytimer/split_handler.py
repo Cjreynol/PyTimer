@@ -7,6 +7,7 @@ class SplitHandler:
     """
 
     CURRENT_FILE_VERSION = 1.0
+
     VERSION_KEY = "file_version"
     TITLE_KEY = "title"
     SEGMENTS_KEY = "segments"
@@ -27,11 +28,17 @@ class SplitHandler:
         return sum([segment.difference for segment in self.segments])
 
     def _read_splitfile(self, filename):
+        """
+        Open and return the information from the given file.
+        """
         with open(filename, 'r') as splitfile:
             split_json = load(splitfile)
         return self._parse_json(split_json)
 
     def _parse_json(self, split_json):
+        """
+        Read the relevant information from the JSON and return it.
+        """
         if split_json[self.VERSION_KEY] != self.CURRENT_FILE_VERSION:
             raise RuntimeError("File version is outdated.")
         title = split_json[self.TITLE_KEY]
@@ -41,33 +48,57 @@ class SplitHandler:
         return title, segments
 
     def save_splits(self, filename, replace):
+        """
+        Open and write the current split information to the given file.
+        """
         with open(filename, 'w') as splitfile:
             dump(self._build_json_object(replace), splitfile, indent = 4)
 
     def _build_json_object(self, replace):
+        """
+        Create the JSON-parsable dictionary to be written out to a file.
+        """
         return {self.VERSION_KEY : self.CURRENT_FILE_VERSION,
                 self.TITLE_KEY : self.title,
                 self.SEGMENTS_KEY : [segment.build_json_object(replace) 
                                         for segment in self.segments]}
 
     def set_split(self, time):
+        """
+        Set the next segment to the current time, and return the derived 
+        information from the update.
+        """
         if self._segment_index < len(self.segments):
             self.segments[self._segment_index].current_time = time
+
             diff = self.segments[self._segment_index].difference
-
-
-            # save to temp file here in future version
-
             curr_index = self._segment_index
+
             self._segment_index += 1
+
             return diff, curr_index
 
     def skip_segment(self):
+        """
+        Increase the segment index, keeping it within the upper bound.
+        """
         self._segment_index += 1
+        n = len(self.segments)
+        if self._segment_index >= n:
+            self._segment_index = n
 
+    def back_segment(self):
+        """
+        Decrease the segment index, keeping it within the lower bound.
+        """
+        self._segment_index -= 1
+        if self._segment_index < 0:
+            self._segment_index = 0
 
     class Segment:
         """
+        The container for the specific information for each segment within 
+        the splitfile.
         """
         
         LABEL_KEY = "segment_label"
@@ -79,6 +110,9 @@ class SplitHandler:
             self.current_time = 0.0     # in ms
 
         def build_json_object(self, replace):
+            """
+            Create the JSON-parsable dictionary to be written out to a file.
+            """
             return {self.LABEL_KEY : self.label,
                     self.BEST_TIME_KEY : 
                         round(self.current_time, 4) if replace else self.best_time}

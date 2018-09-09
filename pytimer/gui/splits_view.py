@@ -49,32 +49,32 @@ class SplitsView(Frame):
         for widget in self.segment_area.winfo_children():
             widget.destroy()
 
-        self.segments = [SegmentFrame(self.segment_area, segment) 
+        self.segments = [self.SegmentFrame(self.segment_area, segment) 
                             for segment in segments_data]
         for segment in self.segments:
             segment.pack()
         
 
-class SegmentFrame(Frame):
-    """
-    """
+    class SegmentFrame(Frame):
+        """
+        """
 
-    def __init__(self, root, segment_data):
-        super().__init__(root)
-        
-        self._create(segment_data)
-        self._arrange()
+        def __init__(self, root, segment_data):
+            super().__init__(root)
+            
+            self._create(segment_data)
+            self._arrange()
 
-    def _create(self, segment_data):
-        self.label = Label(self, text = segment_data.label.ljust(20))
-        self.best_time = Label(self, text = 
-                    Stopwatch.ms_to_time_str(segment_data.best_time).ljust(11))
-        self.difference = Label(self, text = "--".ljust(8))
+        def _create(self, segment_data):
+            self.label = Label(self, text = segment_data.label.ljust(20))
+            self.best_time = Label(self, text = 
+                        Stopwatch.ms_to_time_str(segment_data.best_time).ljust(11))
+            self.difference = Label(self, text = "--".ljust(8))
 
-    def _arrange(self):
-        self.label.grid(row = 0, column = 0)
-        self.difference.grid(row = 0, column = 1)
-        self.best_time.grid(row = 0, column = 2)
+        def _arrange(self):
+            self.label.grid(row = 0, column = 0)
+            self.difference.grid(row = 0, column = 1)
+            self.best_time.grid(row = 0, column = 2)
 
-    def update_segment_time(self, diff):
-        self.difference["text"] = diff.ljust(8)
+        def update_segment_time(self, diff):
+            self.difference["text"] = diff.ljust(8)
