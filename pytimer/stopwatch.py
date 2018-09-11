@@ -91,7 +91,8 @@ class Stopwatch:
         try:
             hours, minutes, seconds = map(float, time_str.split(':'))
             result = seconds + minutes * 60 + hours * 3600
-        except ValueError: pass
+        except ValueError: 
+            pass
             
         return result
 

@@ -1,42 +1,43 @@
-from tkinter                import Button, Entry, Frame, Label, Toplevel
+from tkinter                        import (Button, Entry, Frame, Label, 
+                                            Toplevel)
 
-from pytimer.split_handler  import SplitHandler
-from pytimer.stopwatch      import Stopwatch
+from pytimer.split_handler          import SplitHandler
+from pytimer.gui.time_entry_widget  import TimeEntryWidget
 
 
-class NewSplitEntry:
+class NewSplitEntryBox(Toplevel):
     """
     """
 
     def __init__(self, controller):
-        self.window = Toplevel()
-        self.window_title = "Enter New Split Information"
+        super().__init__()
+        self.title("Enter New Split Information")
         self.controller = controller
 
         self._create()
         self._arrange()
 
     def _create(self):
-        self.title_label = Label(self.window, text = "Title")
-        self.title_entry = Entry(self.window)
+        self.title_label = Label(self, text = "Title")
+        self.title_entry = Entry(self)
 
-        self.new_segment_button = Button(self.window, text = "New Segment",
+        self.new_segment_button = Button(self, text = "New Segment",
                                             command = self._add_segment) 
-        self.segment_area = Frame(self.window)
+        self.segment_area = Frame(self)
         self.segments = []
 
-        self.confirm_button = Button(self.window, 
+        self.confirm_button = Button(self, 
                                 text = "Confirm",
                                 command = lambda: 
                 self.controller.new_split_callback(self._retrieve_and_close))
-        self.window.bind("<Return>", 
+        self.bind("<Return>", 
                             lambda event: 
                 self.controller.new_split_callback(self._retrieve_and_close))
 
-        self.cancel_button = Button(self.window, 
+        self.cancel_button = Button(self, 
                                 text = "Cancel", 
-                                command = lambda: self.window.destroy())
-        self.window.bind("<Escape>", lambda event: self.window.destroy())
+                                command = lambda: self.destroy())
+        self.bind("<Escape>", lambda event: self.destroy())
 
     def _arrange(self):
         self.title_label.grid(row = 0, column = 0)
@@ -59,7 +60,7 @@ class NewSplitEntry:
                                         for segment in self.segments]
         }
         
-        self.window.destroy()
+        self.destroy()
         return data_dict
 
 
@@ -78,34 +79,20 @@ class NewSplitEntry:
             self.name_entry = Entry(self)
 
             self.time_label = Label(self, text = "Best Time")
-            self.hour_entry = Entry(self, width = 2)
-            self.minute_entry = Entry(self, width = 2)
-            self.second_entry = Entry(self, width = 5)
+            self.time_entry = TimeEntryWidget(self)
 
         def _arrange(self):
             self.name_label.grid(row = 0, column = 0)
             self.name_entry.grid(row = 1, column = 0)
 
             self.time_label.grid(row = 0, column = 1)
-            self.hour_entry.grid(row = 1, column = 1)
-            self.minute_entry.grid(row = 1, column = 2)
-            self.second_entry.grid(row = 1, column = 3)
+            self.time_entry.grid(row = 1, column = 1)
 
         def get_data(self):
-            hours = self.hour_entry.get()
-            if hours == "":
-                hours = 0
-            minutes = self.minute_entry.get()
-            if minutes == "":
-                minutes = 0
-            seconds = self.second_entry.get()
-            if seconds == "":
-                seconds = 0
-            
-            time_string = "{}:{}:{}".format(hours, minutes, seconds)
             data_dict = {
-                SplitHandler.Segment.LABEL_KEY: self.name_entry.get(),
+                SplitHandler.Segment.LABEL_KEY: 
+                                            self.name_entry.get(),
                 SplitHandler.Segment.BEST_TIME_KEY: 
-                                        Stopwatch.time_str_to_ms(time_string)
+                                            self.time_entry.get_time_in_ms()
             }
             return data_dict

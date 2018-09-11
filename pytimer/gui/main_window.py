@@ -91,8 +91,8 @@ class MainWindow:
             },
             "Controls" : {
                 "space" : (self.controller.toggle_callback, "Toggle"),
-                "r" : (self.controller.reset_callback, "Reset"),
-                "t" : (self.controller.set_time_callback, "Set Time"),
+                "Command-r" : (self.controller.reset_callback, "Reset"),
+                "Command-t" : (self.controller.set_time_callback, "Set Time"),
 
                 "Return" : (self.controller.split_callback, "Split"),
                 "Command-[" : (self.controller.back_split_callback, 

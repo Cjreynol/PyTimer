@@ -3,7 +3,7 @@ from os                     import path
 from tkinter.filedialog     import askopenfilename, asksaveasfilename
 
 from pytimer.split_handler  import SplitHandler
-from pytimer.gui            import (MainWindow, NewSplitEntry, SplitsView, 
+from pytimer.gui            import (MainWindow, NewSplitEntryBox, SplitsView, 
                                     StopwatchView, TimeEntryBox)
 from pytimer.stopwatch      import Stopwatch
 
@@ -163,4 +163,4 @@ class Controller:
         """
         Create prompt window for making a new split file.
         """
-        NewSplitEntry(self)
+        NewSplitEntryBox(self)
