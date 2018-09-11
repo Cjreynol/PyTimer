@@ -1,5 +1,6 @@
-from tkinter import Button, Entry, Toplevel
+from tkinter            import Button, Entry, Toplevel
 
+from pytimer.stopwatch  import Stopwatch
 
 class TimeEntryBox:
     """
@@ -52,4 +53,5 @@ class TimeEntryBox:
         if seconds == "":
             seconds = 0
         
-        return "{}:{}:{}".format(hours, minutes, seconds)
+        time_string = "{}:{}:{}".format(hours, minutes, seconds)
+        return Stopwatch.time_str_to_ms(time_string)

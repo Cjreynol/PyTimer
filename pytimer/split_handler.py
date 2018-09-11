@@ -12,9 +12,7 @@ class SplitHandler:
     TITLE_KEY = "title"
     SEGMENTS_KEY = "segments"
 
-    def __init__(self, split_filename):
-        title, segments = self._read_splitfile(split_filename)
-
+    def __init__(self, title, segments):
         self.title = title
         self.segments = segments
         self._segment_index = 0
@@ -27,23 +25,25 @@ class SplitHandler:
     def difference_from_best(self):
         return sum([segment.difference for segment in self.segments])
 
-    def _read_splitfile(self, filename):
+    @classmethod
+    def read_splitfile(cls, filename):
         """
         Open and return the information from the given file.
         """
         with open(filename, 'r') as splitfile:
             split_json = load(splitfile)
-        return self._parse_json(split_json)
+        return cls.parse_json(split_json)
 
-    def _parse_json(self, split_json):
+    @classmethod
+    def parse_json(cls, split_json):
         """
         Read the relevant information from the JSON and return it.
         """
-        if split_json[self.VERSION_KEY] != self.CURRENT_FILE_VERSION:
+        if split_json[cls.VERSION_KEY] != cls.CURRENT_FILE_VERSION:
             raise RuntimeError("File version is outdated.")
-        title = split_json[self.TITLE_KEY]
-        segments = [self.Segment(seg_data) 
-                        for seg_data in split_json[self.SEGMENTS_KEY]]
+        title = split_json[cls.TITLE_KEY]
+        segments = [cls.Segment(seg_data) 
+                        for seg_data in split_json[cls.SEGMENTS_KEY]]
         
         return title, segments
 

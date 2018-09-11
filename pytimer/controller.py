@@ -3,8 +3,8 @@ from os                     import path
 from tkinter.filedialog     import askopenfilename, asksaveasfilename
 
 from pytimer.split_handler  import SplitHandler
-from pytimer.gui            import (MainWindow, SplitsView, StopwatchView, 
-                                        TimeEntryBox)
+from pytimer.gui            import (MainWindow, NewSplitEntry, SplitsView, 
+                                    StopwatchView, TimeEntryBox)
 from pytimer.stopwatch      import Stopwatch
 
 
@@ -68,10 +68,22 @@ class Controller:
         Get the time string from the time entry window and set the stopwatch 
         to the new time.
         """
-        time_str = retrieve_func()
-        new_time = self.stopwatch.time_str_to_ms(time_str)
+        new_time = retrieve_func()
         if new_time is not None:
             self.stopwatch.set_time(new_time)
+
+    def new_split_callback(self, retrieve_func):
+        """
+        """
+        split_data = retrieve_func()
+        title, segments = SplitHandler.parse_json(split_data)
+        self.split_handler = SplitHandler(title, segments)
+        self.splits_view.update(self.split_handler.title,
+                                self.split_handler.segments)
+        if not self.splits_view.winfo_ismapped():
+            self.swap_to_splits_callback()
+        else:
+            self.splits_view.hide_open_splitfile_buttons()
 
     def open_callback(self):
         """
@@ -80,11 +92,14 @@ class Controller:
         filename = askopenfilename(initialdir = self.support_dir, 
                                     filetypes = self.FILETYPES) 
         if filename:
-            self.split_handler = SplitHandler(filename)
+            title, segments = SplitHandler.read_splitfile(filename)
+            self.split_handler = SplitHandler(title, segments)
             self.splits_view.update(self.split_handler.title, 
                                     self.split_handler.segments)
             if not self.splits_view.winfo_ismapped():
                 self.swap_to_splits_callback()
+            else:
+                self.splits_view.hide_open_splitfile_buttons()
 
     def save_callback(self):
         """
@@ -112,6 +127,8 @@ class Controller:
         """
         if not self.splits_view.winfo_ismapped():
             self.splits_view.pack()
+            if self.split_handler is None:
+                self.splits_view.show_open_splitfile_buttons()
 
     def split_callback(self):
         """
@@ -141,3 +158,9 @@ class Controller:
         """
         if self.split_handler is not None:
             self.split_handler.skip_segment()
+
+    def new_callback(self):
+        """
+        Create prompt window for making a new split file.
+        """
+        NewSplitEntry(self)

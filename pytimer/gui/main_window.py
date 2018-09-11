@@ -76,9 +76,12 @@ class MainWindow:
         """
         keybindings = {
             "File" : {
-                "Command-w" : (self.controller.quit, "Close Window"),
-                "Command-o" : (self.controller.open_callback, "Open Split..."),
-                "Command-s" : (self.controller.save_callback, "Save as...")
+                "Command-n" : (self.controller.new_callback, "New Split"),
+                "Command-o" : (self.controller.open_callback, 
+                                "Open Split..."),
+                "Command-s" : (self.controller.save_callback, 
+                                "Save Split as..."),
+                "Command-w" : (self.controller.quit, "Close Window")
             },
             "View" : {
                 "Command-Key-1" : (self.controller.swap_to_stopwatch_callback, 
@@ -92,8 +95,10 @@ class MainWindow:
                 "t" : (self.controller.set_time_callback, "Set Time"),
 
                 "Return" : (self.controller.split_callback, "Split"),
-                "Command-[" : (self.controller.back_split_callback, "Back Split"),
-                "Command-]" : (self.controller.skip_split_callback, "Forward Split")
+                "Command-[" : (self.controller.back_split_callback, 
+                                "Back Split"),
+                "Command-]" : (self.controller.skip_split_callback, 
+                                "Forward Split")
             }
         }
         return keybindings
