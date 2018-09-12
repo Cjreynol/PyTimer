@@ -72,3 +72,11 @@ class TimeEntryWidget(Frame):
 
     def get_time_in_ms(self):
         return Stopwatch.time_str_to_ms(self.get_time_string())
+
+    def insert(self, time):
+        # time in ms
+        time_string = Stopwatch.ms_to_time_str(time)
+        hours, minutes, seconds = time_string.split(':')
+        self.hours_var.set(hours)
+        self.minutes_var.set(minutes)
+        self.seconds_var.set(seconds)

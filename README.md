@@ -19,5 +19,5 @@ currently only tested using Python 3.7 and py2app V0.17.
 I would suggest creating a virtual environment (`python3 -m venv <env name>`) 
 and then installing `py2app` with `pip install py2app`.  
 
-To build from the source run `python app_setup.py py2app` from the project's 
+To build from the source run `python app_build.py py2app` from the project's 
 root directory.

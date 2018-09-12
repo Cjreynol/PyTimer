@@ -4,7 +4,7 @@ from os.path            import exists, expanduser, join
 from pytimer.controller import Controller
 
 
-__version__ = ('2', '0', '1')
+__version__ = ('2', '1', '0')
 
 SUPPORT_DIR = expanduser(join("~", 
                                 "Library", 

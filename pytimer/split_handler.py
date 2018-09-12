@@ -52,9 +52,9 @@ class SplitHandler:
         Open and write the current split information to the given file.
         """
         with open(filename, 'w') as splitfile:
-            dump(self._build_json_object(replace), splitfile, indent = 4)
+            dump(self.build_json_object(replace), splitfile, indent = 4)
 
-    def _build_json_object(self, replace):
+    def build_json_object(self, replace):
         """
         Create the JSON-parsable dictionary to be written out to a file.
         """

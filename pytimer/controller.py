@@ -164,3 +164,12 @@ class Controller:
         Create prompt window for making a new split file.
         """
         NewSplitEntryBox(self)
+
+    def new_from_callback(self):
+        """
+        Create prompt window for making a new split file, populated with 
+        the information from the current split file.
+        """
+        if self.split_handler is not None:
+            split_data = self.split_handler.build_json_object(replace = False)
+            NewSplitEntryBox(self, split_data)

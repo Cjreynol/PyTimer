@@ -1,4 +1,5 @@
-from tkinter                    import Menu, Tk
+from tkinter        import Menu, Tk
+from tkinter.ttk    import Frame
 
 
 class MainWindow:
@@ -9,18 +10,22 @@ class MainWindow:
 
     def __init__(self, controller):
         self.controller = controller
-        self.root = self._create_root()
+        self.window, self.root = self._create_window_root()
         self._create_menu()
 
-    def _create_root(self):
+    def _create_window_root(self):
         """
         Return the root window already configured and with shortcuts bound.
         """
-        root = Tk()
-        root.title(self.WINDOW_TITLE)
-        return self._add_root_keybindings(root)
+        window = Tk()
+        window.title(self.WINDOW_TITLE)
 
-    def _add_root_keybindings(self, root):
+        root = Frame(window)
+        root.pack()
+        
+        return self._add_window_keybindings(window), root
+
+    def _add_window_keybindings(self, root):
         """
         Bind all of the program's shortcuts to their callbacks.
 
@@ -43,8 +48,8 @@ class MainWindow:
         Each key holds a separate set of menu items, with keybinding, 
         callback, and menu label.
         """
-        menubar = Menu(self.root)
-        self.root.config(menu = menubar)
+        menubar = Menu(self.window)
+        self.window.config(menu = menubar)
         for menu_name, bindings in self._get_keybindings().items():
             new_menu = Menu(menubar)
             menubar.add_cascade(label = menu_name, menu = new_menu)
@@ -56,10 +61,10 @@ class MainWindow:
                                             bind.replace("Key-", ""))
 
     def quit(self):
-        self.root.destroy()
+        self.window.destroy()
 
     def start(self):
-        self.root.mainloop()
+        self.window.mainloop()
 
     def _make_event_lambda(self, function):
         """
@@ -77,6 +82,8 @@ class MainWindow:
         keybindings = {
             "File" : {
                 "Command-n" : (self.controller.new_callback, "New Split"),
+                "Command-Shift-n" : (self.controller.new_from_callback, 
+                                        "New From Current"),
                 "Command-o" : (self.controller.open_callback, 
                                 "Open Split..."),
                 "Command-s" : (self.controller.save_callback, 
