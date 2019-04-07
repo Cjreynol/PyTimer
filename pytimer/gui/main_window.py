@@ -8,57 +8,58 @@ class MainWindow:
 
     WINDOW_TITLE = "PyTimer"
 
-    def __init__(self, controller):
+    def __init__(self, controller, shortcut_modifier):
         self.controller = controller
-        self.window, self.root = self._create_window_root()
-        self._create_menu()
+        self.window = self._create_window(shortcut_modifier)
+        self.root = self._create_root(self.window)
 
-    def _create_window_root(self):
+        menubar = self._create_menu(shortcut_modifier)
+        self.window.config(menu = menubar)
+
+    def _create_window(self, shortcut_modifier):
         """
         Return the root window already configured and with shortcuts bound.
         """
         window = Tk()
         window.title(self.WINDOW_TITLE)
+        window = self._add_window_keybindings(window, shortcut_modifier)
 
+        return window
+
+    def _create_root(self, window):
+        """
+        Return the root frame.
+        """
         root = Frame(window)
         root.pack()
-        
-        return self._add_window_keybindings(window), root
-
-    def _add_window_keybindings(self, root):
-        """
-        Bind all of the program's shortcuts to their callbacks.
-
-        Ignores the menu divides, binds them all as lambdas to capture the 
-        event that is passed by using bind.
-        """
-        root.protocol("WM_DELETE_WINDOW", self.controller.quit)
-
-        for _, subdict in self._get_keybindings().items():
-            for bind, pair in subdict.items():
-                callback, _ = pair
-                root.bind("<{}>".format(bind),
-                            self._make_event_lambda(callback))
         return root
 
-    def _create_menu(self):
+    def _add_window_keybindings(self, window, shortcut_modifier):
+        """
+        Bind all of the program's shortcuts.
+        """
+        window.protocol("WM_DELETE_WINDOW", self.controller.quit)
+
+        for _, subdict in self._get_keybindings(shortcut_modifier).items():
+            for keybind, pair in subdict.items():
+                callback, _ = pair
+                window.bind("<{}>".format(keybind),
+                            self._make_event_lambda(callback))
+        return window
+
+    def _create_menu(self, shortcut_modifier):
         """
         Bind all of the program's shortcuts to menu items.
-
-        Each key holds a separate set of menu items, with keybinding, 
-        callback, and menu label.
         """
         menubar = Menu(self.window)
-        self.window.config(menu = menubar)
-        for menu_name, bindings in self._get_keybindings().items():
+        for menu_name, bindings in self._get_keybindings(shortcut_modifier).items():
             new_menu = Menu(menubar)
             menubar.add_cascade(label = menu_name, menu = new_menu)
             for bind, pair in bindings.items():
                 callback, menu_label = pair
-                new_menu.add_command(label = menu_label,
-                                        command = callback,
-                                        accelerator = 
-                                            bind.replace("Key-", ""))
+                new_menu.add_command(label = menu_label, command = callback,
+                                        accelerator = bind.replace("Key-", ""))
+        return menubar
 
     def quit(self):
         self.window.destroy()
@@ -72,40 +73,41 @@ class MainWindow:
         """
         return lambda event: function()
 
-    def _get_keybindings(self):
+    def _get_keybindings(self, shortcut_modifier):
         """
         Return a dict of all the keybindings in the application.
         
         Dictionary is in the form of:
-        key : (callback, label)
+        category : { shortcut_key : (callback, label) }
         """
         keybindings = {
             "File" : {
-                "Command-n" : (self.controller.new_callback, "New Split"),
-                "Command-Shift-n" : (self.controller.new_from_callback, 
-                                        "New From Current"),
-                "Command-o" : (self.controller.open_callback, 
-                                "Open Split..."),
-                "Command-s" : (self.controller.save_callback, 
-                                "Save Split as..."),
-                "Command-w" : (self.controller.quit, "Close Window")
-            },
+                shortcut_modifier + "-n" : (self.controller.new_callback, 
+                                                "New Split"),
+                shortcut_modifier + "-Shift-n" : (self.controller.new_from_callback, 
+                                                "New From Current"),
+                shortcut_modifier + "-o" : (self.controller.open_callback, 
+                                                "Open Split..."),
+                shortcut_modifier + "-s" : (self.controller.save_callback, 
+                                                "Save Split as..."),
+                shortcut_modifier + "-w" : (self.controller.quit, 
+                                                "Close Window") },
             "View" : {
-                "Command-Key-1" : (self.controller.swap_to_stopwatch_callback, 
-                                    "Stopwatch View"),
-                "Command-Key-2" : (self.controller.swap_to_splits_callback, 
-                                    "Splits View")
-            },
+                shortcut_modifier + "-Key-1" : (self.controller.swap_to_stopwatch_callback, 
+                                                "Stopwatch View"),
+                shortcut_modifier + "-Key-2" : (self.controller.swap_to_splits_callback, 
+                                                "Splits View") },
             "Controls" : {
-                "space" : (self.controller.toggle_callback, "Toggle"),
-                "Command-r" : (self.controller.reset_callback, "Reset"),
-                "Command-t" : (self.controller.set_time_callback, "Set Time"),
+                "space" : (self.controller.toggle_callback, 
+                                                "Toggle"),
+                shortcut_modifier + "-r" : (self.controller.reset_callback, 
+                                                "Reset"),
+                shortcut_modifier + "-t" : (self.controller.set_time_callback, 
+                                                "Set Time"),
 
                 "Return" : (self.controller.split_callback, "Split"),
-                "Command-[" : (self.controller.back_split_callback, 
-                                "Back Split"),
-                "Command-]" : (self.controller.skip_split_callback, 
-                                "Forward Split")
-            }
-        }
+                shortcut_modifier + "-[" : (self.controller.back_split_callback, 
+                                                "Back Split"),
+                shortcut_modifier + "-]" : (self.controller.skip_split_callback, 
+                                                "Forward Split") } }
         return keybindings

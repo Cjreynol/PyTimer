@@ -1,7 +1,6 @@
 from tkinter            import StringVar
 from tkinter.ttk        import Button, Frame, Label
 
-from pytimer.gui        import MainWindow
 from pytimer.stopwatch  import Stopwatch
 
 

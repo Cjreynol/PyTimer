@@ -1,11 +1,10 @@
-from os                     import path
+from os                 import path
+from tkinter.filedialog import askopenfilename, asksaveasfilename
 
-from tkinter.filedialog     import askopenfilename, asksaveasfilename
-
-from pytimer.split_handler  import SplitHandler
-from pytimer.gui            import (MainWindow, NewSplitEntryBox, SplitsView, 
+from .split_handler     import SplitHandler
+from .gui               import (MainWindow, NewSplitEntryBox, SplitsView, 
                                     StopwatchView, TimeEntryBox)
-from pytimer.stopwatch      import Stopwatch
+from .stopwatch         import Stopwatch
 
 
 class Controller:
@@ -16,8 +15,8 @@ class Controller:
     PYTIMER_EXTENSION = ".pytimer"
     FILETYPES = (("pytimer files", "*" + PYTIMER_EXTENSION),)
     
-    def __init__(self, support_dir):
-        self.window = MainWindow(self)
+    def __init__(self, support_dir, shortcut_modifier):
+        self.window = MainWindow(self, shortcut_modifier)
         self.support_dir = support_dir
 
         self.stopwatch_view = StopwatchView(self.window.root, self)

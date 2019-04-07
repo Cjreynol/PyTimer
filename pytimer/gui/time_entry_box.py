@@ -1,6 +1,6 @@
 from tkinter                        import Button, Toplevel
 
-from pytimer.gui.time_entry_widget  import TimeEntryWidget
+from .time_entry_widget  import TimeEntryWidget
 
 
 class TimeEntryBox(Toplevel):
@@ -11,23 +11,19 @@ class TimeEntryBox(Toplevel):
         super().__init__()
         self.title(window_title)
         self.controller = controller
+
         self._create()
         self._arrange()
 
     def _create(self):
         self.time_entry = TimeEntryWidget(self)
-        self.confirm = Button(self, 
-                                text = "Confirm",
-                                command = lambda: 
-                                            self.controller.
-                                                confirm_callback(
+        self.confirm = Button(self, text = "Confirm",
+                                command = lambda: self.controller.
+                                                    confirm_callback(
                                                     self.retrieve_and_close))
-        self.bind("<Return>", 
-                    lambda event: self.controller.
+        self.bind("<Return>", lambda event: self.controller.
                                     confirm_callback(self.retrieve_and_close))
-
-        self.cancel = Button(self, 
-                                text = "Cancel", 
+        self.cancel = Button(self, text = "Cancel", 
                                 command = lambda: self.destroy())
         self.bind("<Escape>", lambda event: self.destroy())
     

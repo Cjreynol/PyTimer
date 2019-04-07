@@ -2,7 +2,7 @@ from tkinter                        import (Button, Entry, Frame, Label,
                                             Toplevel)
 
 from pytimer.split_handler          import SplitHandler
-from pytimer.gui.time_entry_widget  import TimeEntryWidget
+from .time_entry_widget  import TimeEntryWidget
 
 
 class NewSplitEntryBox(Toplevel):
@@ -32,23 +32,13 @@ class NewSplitEntryBox(Toplevel):
                                 text = "Confirm",
                                 command = lambda: 
                 self.controller.new_split_callback(self._retrieve_and_close))
-        self.bind("<Return>", 
-                            lambda event: 
+        self.bind("<Return>", lambda event: 
                 self.controller.new_split_callback(self._retrieve_and_close))
 
         self.cancel_button = Button(self, 
                                 text = "Cancel", 
                                 command = lambda: self.destroy())
         self.bind("<Escape>", lambda event: self.destroy())
-
-    def _add_split_data(self, split_data):
-        self.title_entry.insert(0, split_data[SplitHandler.TITLE_KEY])
-        for i, segment in enumerate(split_data[SplitHandler.SEGMENTS_KEY]):
-            segment_label = segment[SplitHandler.Segment.LABEL_KEY]
-            segment_time = segment[SplitHandler.Segment.BEST_TIME_KEY]
-            new_segment_frame = self.AddSegmentFrame(self.segment_area, i)
-            new_segment_frame.update(segment_label, segment_time)
-            self.segments.append(new_segment_frame)
 
     def _arrange(self):
         self.title_label.grid(row = 0, column = 0)
@@ -59,6 +49,18 @@ class NewSplitEntryBox(Toplevel):
         self.confirm_button.grid(row = 3, column = 1)
         for segment in self.segments:
             segment.pack()
+
+    def _add_split_data(self, split_data):
+        """
+        Parse the split data into segments, create widgets for those segments.
+        """
+        self.title_entry.insert(0, split_data[SplitHandler.TITLE_KEY])
+        for i, segment in enumerate(split_data[SplitHandler.SEGMENTS_KEY]):
+            segment_label = segment[SplitHandler.Segment.LABEL_KEY]
+            segment_time = segment[SplitHandler.Segment.BEST_TIME_KEY]
+            new_segment_frame = self.AddSegmentFrame(self.segment_area, i)
+            new_segment_frame.update(segment_label, segment_time)
+            self.segments.append(new_segment_frame)
 
     def _add_segment(self):
         new_segment = self.AddSegmentFrame(self.segment_area, 
@@ -72,9 +74,7 @@ class NewSplitEntryBox(Toplevel):
             SplitHandler.TITLE_KEY: self.title_entry.get(),
             SplitHandler.SEGMENTS_KEY: [segment.get_data() 
                                         for segment in self.segments
-                                            if not segment.removed]
-        }
-        
+                                            if not segment.removed] }
         self.destroy()
         return data_dict
 
