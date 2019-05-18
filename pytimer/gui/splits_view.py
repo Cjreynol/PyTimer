@@ -1,22 +1,15 @@
-from tkinter            import StringVar
-from tkinter.ttk        import Button, Frame, Label
+from tkinter            import Button, Frame, Label
+
+from chadlib.gui        import View
 
 from pytimer.stopwatch  import Stopwatch
 
 
-class SplitsView(Frame):
+class SplitsView(View):
     """
     """
 
-    def __init__(self, root, controller):
-        super().__init__(root)
-
-        self.controller = controller
-
-        self._create()
-        self._arrange()
-
-    def _create(self):
+    def _create_widgets(self):
         self.title_label = Label(self, text = "--")
         self.split_button = Button(self, text = "Split", 
                                 command = self.controller.split_callback)
@@ -32,11 +25,11 @@ class SplitsView(Frame):
         self.segments = []
 
         self.open_button = Button(self, text = "Open Split", 
-                            command = self.controller.open_callback)
+                            command = self.controller.sl_component.load)
         self.new_button = Button(self, text = "New Split",
                             command = self.controller.new_callback)
 
-    def _arrange(self):
+    def _arrange_widgets(self):
         self.title_label.grid(row = 0, column = 0, columnspan = 3)
         self.split_button.grid(row = 1, column = 0, columnspan = 2)
         self.skip_split_button.grid(row = 1, column = 2, columnspan = 2)
@@ -46,8 +39,6 @@ class SplitsView(Frame):
         self.best_header.grid(row = 2, column = 2)
 
         self.segment_area.grid(row = 3, column = 0, columnspan = 3)
-        for segment in self.segments:
-            segment.pack()
 
     def update(self, title, segments_data):
         self.title_label["text"] = title

@@ -1,8 +1,8 @@
-from tkinter                        import (Button, Entry, Frame, Label, 
-                                            Toplevel)
+from tkinter                    import (Button, Entry, Frame, Label, 
+                                        Toplevel)
 
-from pytimer.split_handler          import SplitHandler
-from .time_entry_widget  import TimeEntryWidget
+from pytimer.split_handler      import SplitHandler
+from .time_entry_widget         import TimeEntryWidget
 
 
 class NewSplitEntryBox(Toplevel):

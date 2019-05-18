@@ -1,23 +1,15 @@
-from tkinter        import StringVar, NO, X
-from tkinter.ttk    import Button, Frame, Label
+from tkinter            import Button, Label, StringVar, NO, X
+
+from chadlib.gui        import View
+from chadlib.utility    import event_wrapper
 
 
-class StopwatchView(Frame):
+class StopwatchView(View):
     """
-    Provides an interface for the controller to the GUI.
     """
 
-    def __init__(self, root, controller):
-        super().__init__(root)
-
-        self.controller = controller
+    def _create_widgets(self):
         self.stopwatch_label_var = StringVar()
-
-        self._create()
-        self._arrange()
-        self._bind()
-
-    def _create(self):
         self.timer_label = Label(self, textvariable = self.stopwatch_label_var, 
                                     font = ("Arial", 36))
 
@@ -27,11 +19,11 @@ class StopwatchView(Frame):
         self.reset = Button(self, text = "Reset",
                             command = self.controller.reset_callback)
 
-    def _arrange(self):
+    def _arrange_widgets(self):
         self.timer_label.pack(fill = X, expand = NO)
         self.toggle.pack(fill = X)
         self.reset.pack(fill = X)
 
-    def _bind(self):
-        self.timer_label.bind("<Button-1>", lambda event: 
-                                        self.controller.set_time_callback())
+    def _bind_actions(self):
+        self.timer_label.bind("<Button-1>", event_wrapper(
+                                        self.controller.set_time_callback))

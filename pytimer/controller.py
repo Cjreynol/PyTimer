@@ -1,5 +1,4 @@
-from os                 import path
-from tkinter.filedialog import askopenfilename, asksaveasfilename
+from chadlib.gui        import ControllerBase, SLComponent, SLController
 
 from .split_handler     import SplitHandler
 from .gui               import (MainWindow, NewSplitEntryBox, SplitsView, 
@@ -7,37 +6,28 @@ from .gui               import (MainWindow, NewSplitEntryBox, SplitsView,
 from .stopwatch         import Stopwatch
 
 
-class Controller:
+class Controller(SLController, ControllerBase):
     """
     Manages both the GUI and the stopwatch, passing information between them.
     """
-
-    PYTIMER_EXTENSION = ".pytimer"
-    FILETYPES = (("pytimer files", "*" + PYTIMER_EXTENSION),)
     
-    def __init__(self, support_dir, shortcut_modifier):
-        self.window = MainWindow(self, shortcut_modifier)
-        self.support_dir = support_dir
+    def __init__(self, application_name, application_state):
+        FILE_EXTENSION = "." + application_name.lower()
+        self.sl_component = SLComponent(self, FILE_EXTENSION,
+                                    (("pytimer files", "*" + FILE_EXTENSION),), 
+                                    application_name)
+        super().__init__(application_name, application_state, StopwatchView)
 
-        self.stopwatch_view = StopwatchView(self.window.root, self)
-        self.splits_view = SplitsView(self.window.root, self)
-
-        self.stopwatch = Stopwatch(self.stopwatch_view.stopwatch_label_var)
+        self.stopwatch = Stopwatch(self.current_view.stopwatch_label_var)
+        self.splits_view = SplitsView(self, self.window.root, None)
         self.split_handler = None
 
-    def quit(self):
+
+    def stop(self):
         """
-        Stop the components and shut down the program.
         """
         self.stopwatch.shutdown()
-        self.window.quit()
-
-    def start(self):
-        """
-        Start the GUI.
-        """
-        self.stopwatch_view.pack()
-        self.window.start()
+        super().stop()
 
     def toggle_callback(self):
         """
@@ -84,34 +74,27 @@ class Controller:
         else:
             self.splits_view.hide_open_splitfile_buttons()
 
-    def open_callback(self):
+    def load_logic(self, filename):
         """
         Prompt the user for a filename and open/read/display that split file.
         """
-        filename = askopenfilename(initialdir = self.support_dir, 
-                                    filetypes = self.FILETYPES) 
-        if filename:
-            title, segments = SplitHandler.read_splitfile(filename)
-            self.split_handler = SplitHandler(title, segments)
-            self.splits_view.update(self.split_handler.title, 
-                                    self.split_handler.segments)
-            if not self.splits_view.winfo_ismapped():
-                self.swap_to_splits_callback()
-            else:
-                self.splits_view.hide_open_splitfile_buttons()
+        title, segments = SplitHandler.read_splitfile(filename)
+        self.split_handler = SplitHandler(title, segments)
+        self.splits_view.update(self.split_handler.title, 
+                                self.split_handler.segments)
 
-    def save_callback(self):
+        if not self.splits_view.winfo_ismapped():
+            self.swap_to_splits_callback()
+        else:
+            self.splits_view.hide_open_splitfile_buttons()
+
+    def save_logic(self, filename):
         """
         Prompt the user for a filename and write out the current splits to 
         that file.
         """
         if self.split_handler is not None:
-            filename = asksaveasfilename(initialdir = self.support_dir, 
-                                        defaultextension = 
-                                            self.PYTIMER_EXTENSION,
-                                        filetypes = self.FILETYPES) 
-            if filename:
-                self.split_handler.save_splits(filename, replace = True)
+            self.split_handler.save_splits(filename, replace = True)
 
     def swap_to_stopwatch_callback(self):
         """
@@ -172,3 +155,36 @@ class Controller:
         if self.split_handler is not None:
             split_data = self.split_handler.build_json_object(replace = False)
             NewSplitEntryBox(self, split_data)
+
+    def get_menu_data(self):
+        menu_setup = super().get_menu_data()
+        menu_setup = self.sl_component.get_menu_data(menu_setup)
+
+        menu_setup.add_submenu_item("File", "New Split", self.new_callback, 
+                                    "{}-n")
+        menu_setup.add_submenu_item("File", "New From Current", 
+                                    self.new_from_callback, "{}-Shift-n")
+
+        menu_setup.add_submenu_item("View", "Stopwatch View", 
+                                    self.swap_to_stopwatch_callback, 
+                                    "{}-Key-1")
+        menu_setup.add_submenu_item("View", "Splits View", 
+                                    self.swap_to_splits_callback, 
+                                    "{}-Key-2")
+
+        menu_setup.add_submenu_item("Controls", "Toggle", self.toggle_callback, 
+                                    "space")
+        menu_setup.add_submenu_item("Controls", "Reset", self.reset_callback, 
+                                    "{}-r")
+        menu_setup.add_submenu_item("Controls", "Set Time", 
+                                    self.set_time_callback, 
+                                    "{}-t")
+        menu_setup.add_submenu_item("Controls", "Split", self.split_callback, 
+                                    "Return")
+        menu_setup.add_submenu_item("Controls", "Back Split", 
+                                    self.back_split_callback, 
+                                    "{}-[")
+        menu_setup.add_submenu_item("Controls", "Forward Split", 
+                                    self.skip_split_callback,
+                                    "{}-]")
+        return menu_setup
