@@ -1,9 +1,11 @@
-from chadlib.gui        import ControllerBase, SLComponent, SLController
+from chadlib.gui            import ControllerBase, SLComponent, SLController
+from chadlib.gui.dialog     import TimeEntryDialog
 
-from .split_handler     import SplitHandler
-from .gui               import (MainWindow, NewSplitEntryBox, SplitsView, 
-                                    StopwatchView, TimeEntryBox)
-from .stopwatch         import Stopwatch
+from .split_handler         import SplitHandler
+from .new_split_entry_box   import NewSplitEntryBox
+from .splits_view           import SplitsView
+from .stopwatch             import Stopwatch
+from .stopwatch_view        import StopwatchView
 
 
 class Controller(SLController, ControllerBase):
@@ -29,7 +31,7 @@ class Controller(SLController, ControllerBase):
         self.stopwatch.shutdown()
         super().stop()
 
-    def toggle_callback(self):
+    def toggle_timer(self):
         """
         Determines and executes the logic for start or stop functionality, 
         depending on the state of the stopwatch.
@@ -39,25 +41,24 @@ class Controller(SLController, ControllerBase):
         else:
             self.stopwatch.stop()
 
-    def reset_callback(self):
+    def reset_timer(self):
         """
         Puts the stopwatch into its initial state.
         """
         self.stopwatch.reset()
 
-    def set_time_callback(self):
+    def get_new_time(self):
         """
         Create a window to allow the user to enter a new time to set.
         """
         self.stopwatch.stop()
-        TimeEntryBox(self, "Enter new time")
+        TimeEntryDialog(self.update_stopwatch_time)
 
-    def confirm_callback(self, retrieve_func):
+    def update_stopwatch_time(self, new_time):
         """
-        Get the time string from the time entry window and set the stopwatch 
-        to the new time.
+        Get the time string from the time entry window, convert it to ms, and 
+        set the stopwatch to the new time.
         """
-        new_time = retrieve_func()
         if new_time is not None:
             self.stopwatch.set_time(new_time)
 
@@ -172,12 +173,12 @@ class Controller(SLController, ControllerBase):
                                     self.swap_to_splits_callback, 
                                     "{}-Key-2")
 
-        menu_setup.add_submenu_item("Controls", "Toggle", self.toggle_callback, 
+        menu_setup.add_submenu_item("Controls", "Toggle", self.toggle_timer, 
                                     "space")
-        menu_setup.add_submenu_item("Controls", "Reset", self.reset_callback, 
+        menu_setup.add_submenu_item("Controls", "Reset", self.reset_timer, 
                                     "{}-r")
         menu_setup.add_submenu_item("Controls", "Set Time", 
-                                    self.set_time_callback, 
+                                    self.get_new_time, 
                                     "{}-t")
         menu_setup.add_submenu_item("Controls", "Split", self.split_callback, 
                                     "Return")

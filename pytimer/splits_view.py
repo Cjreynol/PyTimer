@@ -2,7 +2,7 @@ from tkinter            import Button, Frame, Label
 
 from chadlib.gui        import View
 
-from pytimer.stopwatch  import Stopwatch
+from .stopwatch         import Stopwatch
 
 
 class SplitsView(View):

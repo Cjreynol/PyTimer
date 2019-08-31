@@ -14,10 +14,10 @@ class StopwatchView(View):
                                     font = ("Arial", 36))
 
         self.toggle = Button(self, text = "Start/Stop", 
-                                command = self.controller.toggle_callback)
+                                command = self.controller.toggle_timer)
 
         self.reset = Button(self, text = "Reset",
-                            command = self.controller.reset_callback)
+                            command = self.controller.reset_timer)
 
     def _arrange_widgets(self):
         self.timer_label.pack(fill = X, expand = NO)
@@ -26,4 +26,4 @@ class StopwatchView(View):
 
     def _bind_actions(self):
         self.timer_label.bind("<Button-1>", event_wrapper(
-                                        self.controller.set_time_callback))
+                                        self.controller.get_new_time))

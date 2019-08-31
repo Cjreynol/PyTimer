@@ -1,5 +1,5 @@
 from threading  import Thread
-from time       import sleep, time
+from time       import sleep, strftime, time
 
 
 class Stopwatch:
@@ -108,6 +108,8 @@ class Stopwatch:
         hours, ms = divmod(ms, 3600)
         minutes, ms = divmod(ms, 60)
         seconds = int(ms)
+        print("stopwatch ms: {}".format(ms))
+        print("stopwatch sec: {}".format(seconds))
         hseconds = str(ms - seconds).split('.')[1][0:2]
 
         return "{}{:>02}:{:>02}:{:>02}.{:>02}".format(lead_string, 
@@ -119,7 +121,6 @@ class Stopwatch:
     def _set_time_string(self, elapsed):
         """
         Set the time string using the passed in time, expected to be in 
-        milliseconds.
+        seconds.
         """
-        new_str = self.ms_to_time_str(elapsed)
-        self.time_string_var.set(new_str)
+        self.time_string_var.set(elapsed)
